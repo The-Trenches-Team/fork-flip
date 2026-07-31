@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fork Flip</title>
-<meta name="description" content="Fork Flip — call it in the air. Tines or Handle.">
+<meta name="description" content="Fork Flip — call it in the air. Tines or handle, for $FORKIN on Fork in Hood.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍴</text></svg>">
 <style>
   :root{
@@ -13,8 +13,6 @@
     --line:#232a33;
     --ink:#e8edf4;
     --dim:#8b97a8;
-    --steel:#c9d3df;
-    --steel-dark:#7f8b9b;
     --win:#4ade80;
     --lose:#f87171;
     --gold:#f5c451;
@@ -29,32 +27,31 @@
     color:var(--ink);
     font:16px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
     display:flex; flex-direction:column; align-items:center;
-    padding:28px 18px 40px;
+    padding:24px 18px 48px;
     -webkit-font-smoothing:antialiased;
   }
-  header{text-align:center;margin-bottom:6px}
-  h1{
-    margin:0;
-    font-size:clamp(28px,7vw,44px);
-    letter-spacing:-.02em;
-    font-weight:800;
-  }
+  header{text-align:center}
+  h1{margin:0;font-size:clamp(28px,7vw,44px);letter-spacing:-.02em;font-weight:800}
   h1 span{color:var(--gold)}
   .sub{color:var(--dim);font-size:14px;margin-top:4px}
 
-  .stage{
-    height:260px; width:100%; max-width:420px;
-    display:grid; place-items:center;
-    perspective:1000px;
+  /* ---- mode switch ---- */
+  .modes{
+    display:flex;gap:4px;margin:18px 0 4px;padding:4px;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
   }
-  .fork{
-    width:120px; height:200px;
-    transform-style:preserve-3d;
-    position:relative;
-    filter:drop-shadow(0 18px 22px rgba(0,0,0,.55));
+  .modes button{
+    background:none;border:0;color:var(--dim);font:inherit;font-weight:600;
+    padding:8px 18px;border-radius:9px;cursor:pointer;font-size:14px;
   }
-  .fork.flipping{ animation:flip var(--dur,1.9s) cubic-bezier(.15,.6,.2,1) forwards; }
-  .fork.idle{ animation:bob 3.2s ease-in-out infinite; }
+  .modes button[aria-selected="true"]{background:#1f252e;color:var(--ink)}
+
+  /* ---- fork ---- */
+  .stage{height:240px;width:100%;max-width:420px;display:grid;place-items:center;perspective:1000px}
+  .fork{width:120px;height:200px;transform-style:preserve-3d;position:relative;
+        filter:drop-shadow(0 18px 22px rgba(0,0,0,.55))}
+  .fork.flipping{animation:flip 1.9s cubic-bezier(.15,.6,.2,1) forwards}
+  .fork.idle{animation:bob 3.2s ease-in-out infinite}
   @keyframes bob{
     0%,100%{transform:translateY(0) rotateY(12deg) rotateZ(-4deg)}
     50%{transform:translateY(-12px) rotateY(-12deg) rotateZ(4deg)}
@@ -64,64 +61,65 @@
     45%{transform:translateY(-120px) rotateX(var(--mid,900deg))}
     100%{transform:translateY(0) rotateX(var(--end,1800deg))}
   }
-  .face{
-    position:absolute; inset:0;
-    display:grid; place-items:center;
-    backface-visibility:hidden;
-  }
-  .face.back{ transform:rotateX(180deg) }
+  .face{position:absolute;inset:0;display:grid;place-items:center;backface-visibility:hidden}
+  .face.back{transform:rotateX(180deg)}
   .face svg{width:100%;height:100%}
-  .tag{
-    position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
-    font-size:11px; letter-spacing:.18em; color:var(--dim); text-transform:uppercase;
-  }
+  .tag{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+       font-size:11px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase}
 
-  .call{display:flex;gap:12px;margin:8px 0 18px;flex-wrap:wrap;justify-content:center}
+  /* ---- controls ---- */
+  .call{display:flex;gap:12px;margin:6px 0 16px;flex-wrap:wrap;justify-content:center}
   button{
-    font:inherit; font-weight:650; color:var(--ink);
-    background:var(--panel); border:1px solid var(--line);
-    padding:13px 26px; border-radius:12px; cursor:pointer;
-    transition:transform .12s ease, border-color .12s ease, background .12s ease;
+    font:inherit;font-weight:650;color:var(--ink);
+    background:var(--panel);border:1px solid var(--line);
+    padding:13px 26px;border-radius:12px;cursor:pointer;
+    transition:transform .12s ease,border-color .12s ease,background .12s ease;
   }
-  button:hover:not(:disabled){transform:translateY(-2px);border-color:#3b4655;background:#1a1f26}
-  button:active:not(:disabled){transform:translateY(0)}
+  .call button:hover:not(:disabled),.wide:hover:not(:disabled){transform:translateY(-2px);border-color:#3b4655;background:#1a1f26}
   button:disabled{opacity:.45;cursor:not-allowed}
-  button.primary{border-color:#4a3f1c;background:#1e1a10;color:var(--gold)}
-  button.primary:hover:not(:disabled){border-color:var(--gold);background:#241f13}
+  .wide{width:100%;max-width:460px}
+  .gold{border-color:#4a3f1c;background:#1e1a10;color:var(--gold)}
+  .gold:hover:not(:disabled){border-color:var(--gold);background:#241f13}
 
-  .result{
-    min-height:34px; font-size:19px; font-weight:700; letter-spacing:-.01em;
-    text-align:center;
-  }
+  .result{min-height:34px;font-size:19px;font-weight:700;text-align:center;max-width:460px}
   .result.win{color:var(--win)}
   .result.lose{color:var(--lose)}
   .result .quiet{color:var(--dim);font-weight:500;font-size:15px}
 
-  .stats{
-    display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
-    width:100%; max-width:460px; margin-top:22px;
-  }
-  .stat{
-    background:var(--panel); border:1px solid var(--line);
-    border-radius:12px; padding:12px 8px; text-align:center;
-  }
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:460px;margin-top:20px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center}
   .stat b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
   .stat span{font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
 
-  .log{
-    width:100%;max-width:460px;margin-top:16px;
-    display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:24px;
-  }
-  .pip{
-    width:22px;height:22px;border-radius:6px;display:grid;place-items:center;
-    font-size:11px;font-weight:700;border:1px solid var(--line);color:var(--dim);
-  }
+  .log{width:100%;max-width:460px;margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:22px}
+  .pip{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;
+       font-size:11px;font-weight:700;border:1px solid var(--line);color:var(--dim)}
   .pip.w{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);color:var(--win)}
   .pip.l{background:rgba(248,113,113,.10);border-color:rgba(248,113,113,.3);color:var(--lose)}
 
-  footer{margin-top:26px;color:var(--dim);font-size:12px;text-align:center}
-  footer a{color:var(--dim)}
-  .reset{margin-top:14px;font-size:12px;padding:7px 14px;border-radius:9px}
+  /* ---- chain panel ---- */
+  .panel{width:100%;max-width:460px;background:var(--panel);border:1px solid var(--line);
+         border-radius:14px;padding:16px;margin-bottom:14px}
+  .row{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:3px 0}
+  .row span:first-child{color:var(--dim)}
+  .row span:last-child{font-variant-numeric:tabular-nums}
+  .amount{display:flex;gap:8px;margin-top:12px}
+  input[type=text]{
+    flex:1;min-width:0;font:inherit;color:var(--ink);background:#0d1116;
+    border:1px solid var(--line);border-radius:10px;padding:11px 13px;
+    font-variant-numeric:tabular-nums;
+  }
+  input:focus{outline:none;border-color:#3b4655}
+  .chip{padding:11px 12px;font-size:13px;border-radius:10px}
+  .note{font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.55}
+  .note code{background:#0d1116;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:11.5px}
+  .warn{border-color:#4a3f1c;background:#17140d}
+  .hide{display:none !important}
+  .steps{font-size:12.5px;color:var(--dim);margin-top:10px;min-height:20px;font-variant-numeric:tabular-nums}
+  .steps b{color:var(--ink);font-weight:600}
+  a{color:var(--dim)}
+  footer{margin-top:26px;color:var(--dim);font-size:12px;text-align:center;max-width:460px;line-height:1.7}
+  .small{margin-top:14px;font-size:12px;padding:7px 14px;border-radius:9px}
   @media (prefers-reduced-motion:reduce){
     .fork.idle{animation:none}
     .fork.flipping{animation-duration:.3s}
@@ -135,22 +133,23 @@
   <p class="sub">Call it in the air. Tines or handle.</p>
 </header>
 
+<div class="modes" role="tablist">
+  <button id="mFree"  role="tab" aria-selected="true">Free play</button>
+  <button id="mChain" role="tab" aria-selected="false">$FORKIN</button>
+</div>
+
 <div class="stage">
   <div class="fork idle" id="fork">
     <div class="face front">
       <svg viewBox="0 0 60 100" aria-hidden="true">
-        <defs>
-          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#7f8b9b"/>
-            <stop offset="42%" stop-color="#eaf1f8"/>
-            <stop offset="60%" stop-color="#c9d3df"/>
-            <stop offset="100%" stop-color="#6d7887"/>
-          </linearGradient>
-        </defs>
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#7f8b9b"/><stop offset="42%" stop-color="#eaf1f8"/>
+          <stop offset="60%" stop-color="#c9d3df"/><stop offset="100%" stop-color="#6d7887"/>
+        </linearGradient></defs>
         <g fill="url(#g1)">
-          <rect x="17" y="6"  width="4.4" height="26" rx="2.2"/>
+          <rect x="17" y="6" width="4.4" height="26" rx="2.2"/>
           <rect x="24.5" y="4" width="4.4" height="28" rx="2.2"/>
-          <rect x="32" y="4"  width="4.4" height="28" rx="2.2"/>
+          <rect x="32" y="4" width="4.4" height="28" rx="2.2"/>
           <rect x="39.5" y="6" width="4.4" height="26" rx="2.2"/>
           <path d="M15 30 h30 c0 12 -6 14 -10 16 v44 a5 5 0 0 1 -10 0 v-44 c-4 -2 -10 -4 -10 -16 z"/>
         </g>
@@ -159,20 +158,57 @@
     </div>
     <div class="face back">
       <svg viewBox="0 0 60 100" aria-hidden="true">
-        <defs>
-          <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#6d7887"/>
-            <stop offset="40%" stop-color="#c9d3df"/>
-            <stop offset="58%" stop-color="#9aa6b5"/>
-            <stop offset="100%" stop-color="#5c6674"/>
-          </linearGradient>
-        </defs>
+        <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#6d7887"/><stop offset="40%" stop-color="#c9d3df"/>
+          <stop offset="58%" stop-color="#9aa6b5"/><stop offset="100%" stop-color="#5c6674"/>
+        </linearGradient></defs>
         <g fill="url(#g2)">
           <path d="M23 4 h14 a6 6 0 0 1 6 6 v18 a13 13 0 0 1 -6 11 v51 a7 7 0 0 1 -14 0 v-51 a13 13 0 0 1 -6 -11 v-18 a6 6 0 0 1 6 -6 z"/>
         </g>
       </svg>
       <div class="tag">handle</div>
     </div>
+  </div>
+</div>
+
+<!-- ============================ on-chain panel ============================ -->
+<div id="chainPanel" class="hide" style="width:100%;max-width:460px">
+
+  <div id="undeployed" class="panel warn hide">
+    <b>Not deployed yet.</b>
+    <div class="note">
+      No <code>ForkFlip</code> address is configured for chain 36754663. Deploy it with
+      <code>contracts/script/Deploy.s.sol</code>, then set <code>CFG.contract</code> in this
+      file — or try one right now with <code>?contract=0x…</code> in the URL.
+    </div>
+  </div>
+
+  <div id="connectBox" class="panel hide">
+    <div class="note" style="margin:0 0 12px">
+      Stake $FORKIN on Fork in Hood, chain <code>36754663</code>. The flip is decided by a
+      block hash that does not exist yet when you call it.
+    </div>
+    <button id="btnConnect" class="wide gold">Connect wallet</button>
+  </div>
+
+  <div id="playBox" class="panel hide">
+    <div class="row"><span>Account</span><span id="uAddr">—</span></div>
+    <div class="row"><span>Balance</span><span id="uBal">—</span></div>
+    <div class="row"><span>A win pays</span><span id="uPayout">—</span></div>
+    <div class="row"><span>House can cover</span><span id="uMax">—</span></div>
+    <div class="amount">
+      <input type="text" id="amt" value="1" inputmode="decimal" aria-label="Stake in FORKIN">
+      <button class="chip" data-amt="0.1">0.1</button>
+      <button class="chip" data-amt="1">1</button>
+      <button class="chip" data-amt="5">5</button>
+    </div>
+    <div class="steps" id="steps"></div>
+  </div>
+
+  <div id="resumeBox" class="panel warn hide">
+    <b>You have a flip in the air.</b>
+    <div class="note" id="resumeNote"></div>
+    <button id="btnResume" class="wide gold" style="margin-top:10px">Reveal it</button>
   </div>
 </div>
 
@@ -192,124 +228,520 @@
 
 <div class="log" id="log"></div>
 
-<button class="reset" id="btnReset">Reset stats</button>
+<button class="small" id="btnReset">Reset free-play stats</button>
 
-<footer>
-  50/50, no house edge, no wallet. Just a fork.<br>
-  <a href="https://github.com/The-Trenches-Team/fork-flip">source on github</a>
+<footer id="foot">
+  50/50, no wallet needed in free play. Just a fork.<br>
+  <a href="https://github.com/The-Trenches-Team/fork-flip">source</a> ·
+  <a href="https://forkinhood.com">fork in hood</a>
 </footer>
 
 <script>
-(function(){
-  const fork    = document.getElementById('fork');
-  const result  = document.getElementById('result');
-  const log     = document.getElementById('log');
-  const btnT    = document.getElementById('btnTines');
-  const btnH    = document.getElementById('btnHandle');
-  const btnR    = document.getElementById('btnReset');
-  const KEY     = 'forkflip.v1';
+/* ============================================================
+   Fork Flip. No dependencies, no backend, no bundler.
+   Free play runs entirely in the page. $FORKIN mode talks to the
+   ForkFlip contract on Fork in Hood (chain 36754663) over raw JSON-RPC.
+   ============================================================ */
 
-  const blank = { wins:0, flips:0, streak:0, best:0, recent:[] };
-  let s = load();
-  render();
+/* --------------------------------------------------------------------------
+   keccak-256, pure JS with BigInt lanes. Lifted from forkinhood/verify.mjs.
+   Function selectors and event topics are DERIVED from their signatures at
+   runtime rather than hardcoded, and the implementation self-tests against
+   known digests before the page will send a single transaction. A wrong
+   commitment here would be a lost stake, so it is not taken on faith.
+   -------------------------------------------------------------------------- */
+const MASK = (1n << 64n) - 1n;
+const RC = [
+  0x0000000000000001n,0x0000000000008082n,0x800000000000808an,0x8000000080008000n,
+  0x000000000000808bn,0x0000000080000001n,0x8000000080008081n,0x8000000000008009n,
+  0x000000000000008an,0x0000000000000088n,0x0000000080008009n,0x000000008000000an,
+  0x000000008000808bn,0x800000000000008bn,0x8000000000008089n,0x8000000000008003n,
+  0x8000000000008002n,0x8000000000000080n,0x000000000000800an,0x800000008000000an,
+  0x8000000080008081n,0x8000000000008080n,0x0000000080000001n,0x8000000080008008n,
+];
+const ROT = [
+  [0,36,3,41,18],[1,44,10,45,2],[62,6,43,15,61],[28,55,25,21,56],[27,20,39,8,14],
+];
+const rotl = (v,n) => n === 0 ? v : ((v << BigInt(n)) | (v >> BigInt(64-n))) & MASK;
 
-  function load(){
-    try{
-      const raw = JSON.parse(localStorage.getItem(KEY));
-      if(!raw || typeof raw !== 'object') return {...blank};
-      return {...blank, ...raw, recent: Array.isArray(raw.recent) ? raw.recent.slice(-20) : []};
-    }catch(e){ return {...blank}; }
+function keccakF(A){
+  for(let round=0; round<24; round++){
+    const C=[]; for(let x=0;x<5;x++) C[x]=A[x][0]^A[x][1]^A[x][2]^A[x][3]^A[x][4];
+    const D=[]; for(let x=0;x<5;x++) D[x]=C[(x+4)%5]^rotl(C[(x+1)%5],1);
+    for(let x=0;x<5;x++) for(let y=0;y<5;y++) A[x][y]=(A[x][y]^D[x])&MASK;
+    const B=[[],[],[],[],[]];
+    for(let x=0;x<5;x++) for(let y=0;y<5;y++) B[y][(2*x+3*y)%5]=rotl(A[x][y],ROT[x][y]);
+    for(let x=0;x<5;x++) for(let y=0;y<5;y++)
+      A[x][y]=(B[x][y]^((~B[(x+1)%5][y]&MASK)&B[(x+2)%5][y]))&MASK;
+    A[0][0]=(A[0][0]^RC[round])&MASK;
   }
-  function save(){
-    try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
-  }
-
-  function render(){
-    document.getElementById('sWins').textContent   = s.wins;
-    document.getElementById('sFlips').textContent  = s.flips;
-    document.getElementById('sStreak').textContent = s.streak;
-    document.getElementById('sBest').textContent   = s.best;
-    log.innerHTML = '';
-    s.recent.forEach(w => {
-      const d = document.createElement('div');
-      d.className = 'pip ' + (w ? 'w' : 'l');
-      d.textContent = w ? 'W' : 'L';
-      log.appendChild(d);
-    });
-  }
-
-  // Cryptographically fair 50/50 — no Math.random bias games.
-  function coin(){
-    if(window.crypto && crypto.getRandomValues){
-      const a = new Uint8Array(1);
-      do { crypto.getRandomValues(a); } while(a[0] === 255); // reject the odd byte out
-      return a[0] % 2 === 0 ? 'tines' : 'handle';
+  return A;
+}
+function keccak256(bytes){
+  const RATE=136;
+  const padLen=RATE-(bytes.length%RATE);
+  const padded=new Uint8Array(bytes.length+padLen);
+  padded.set(bytes);
+  padded[bytes.length]=0x01;
+  padded[padded.length-1]|=0x80;
+  let A=[[],[],[],[],[]];
+  for(let x=0;x<5;x++) for(let y=0;y<5;y++) A[x][y]=0n;
+  for(let off=0; off<padded.length; off+=RATE){
+    for(let i=0;i<RATE/8;i++){
+      let lane=0n;
+      for(let b=7;b>=0;b--) lane=(lane<<8n)|BigInt(padded[off+i*8+b]);
+      A[i%5][Math.floor(i/5)]^=lane;
     }
-    return Math.random() < 0.5 ? 'tines' : 'handle';
+    A=keccakF(A);
   }
-
-  let busy = false;
-  let resting = 0; // current rotateX resting angle, keeps the animation continuous
-
-  function flip(call){
-    if(busy) return;
-    busy = true;
-    btnT.disabled = btnH.disabled = true;
-    result.innerHTML = '<span class="quiet">In the air…</span>';
-    result.className = 'result';
-
-    const outcome = coin();
-    // land on a multiple of 360 for tines, 180 offset for handle
-    const spins = 4 + Math.floor(Math.random()*3);
-    const end   = resting + spins*360 + (outcome === 'handle' ? 180 : 0)
-                  - (resting % 360);
-    fork.classList.remove('idle');
-    fork.style.setProperty('--start', resting + 'deg');
-    fork.style.setProperty('--mid', (resting + spins*180) + 'deg');
-    fork.style.setProperty('--end', end + 'deg');
-    fork.classList.remove('flipping');
-    void fork.offsetWidth;           // restart the animation
-    fork.classList.add('flipping');
-
-    setTimeout(() => {
-      resting = end;
-      const won = outcome === call;
-      s.flips++;
-      if(won){
-        s.wins++;
-        s.streak++;
-        if(s.streak > s.best) s.best = s.streak;
-      } else {
-        s.streak = 0;
-      }
-      s.recent.push(won);
-      if(s.recent.length > 20) s.recent.shift();
-      save();
-      render();
-
-      result.className = 'result ' + (won ? 'win' : 'lose');
-      const face = outcome === 'tines' ? 'Tines' : 'Handle';
-      result.innerHTML = won
-        ? face + '. You called it.' + (s.streak > 2 ? ' <span class="quiet">' + s.streak + ' in a row.</span>' : '')
-        : face + '. Not your flip.';
-
-      busy = false;
-      btnT.disabled = btnH.disabled = false;
-    }, 1950);
+  const out=new Uint8Array(32);
+  for(let i=0;i<4;i++){
+    let lane=A[i%5][Math.floor(i/5)];
+    for(let b=0;b<8;b++){ out[i*8+b]=Number(lane&0xffn); lane>>=8n; }
   }
+  return out;
+}
+const hex   = u8 => [...u8].map(b=>b.toString(16).padStart(2,'0')).join('');
+const utf8  = s  => new TextEncoder().encode(s);
+const sel   = sig => '0x'+hex(keccak256(utf8(sig))).slice(0,8);
+const topic = sig => '0x'+hex(keccak256(utf8(sig)));
 
-  btnT.addEventListener('click', () => flip('tines'));
-  btnH.addEventListener('click', () => flip('handle'));
-  btnR.addEventListener('click', () => { s = {...blank}; save(); render();
-    result.className = 'result';
-    result.innerHTML = '<span class="quiet">Make your call.</span>';
-  });
+function keccakSelfTest(){
+  const cases = [
+    [hex(keccak256(utf8(''))),    'c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'],
+    [hex(keccak256(utf8('abc'))), '4e03657aea45a94fc7d47ba826c8d667c0d1e6e33a64a036ec44f58fa12d6c45'],
+    [sel('transfer(address,uint256)'), '0xa9059cbb'],
+    [sel('balanceOf(address)'),        '0x70a08231'],
+  ];
+  return cases.every(([got,want]) => got === want);
+}
+const KECCAK_OK = keccakSelfTest();
 
-  document.addEventListener('keydown', e => {
-    if(e.key === 't' || e.key === 'T') flip('tines');
-    if(e.key === 'h' || e.key === 'H') flip('handle');
+/* ----------------------------------------------------------------- config -- */
+const CFG = {
+  chainId: 36754663,
+  hex: '0x230d4e7',
+  name: 'Fork in Hood',
+  rpc: 'https://rpc.forkinhood.com',
+  currency: { name:'FORKIN', symbol:'FORKIN', decimals:18 },
+  explorer: 'https://forkinhood.com/explorer/',
+  /* Set after deploying contracts/src/ForkFlip.sol. `?contract=0x…` overrides
+     it, so a new deployment can be tried without editing this file. */
+  contract: null,
+};
+{
+  const q = new URLSearchParams(location.search).get('contract');
+  if (q && /^0x[0-9a-fA-F]{40}$/.test(q)) CFG.contract = q;
+}
+
+const SEL = {
+  flip:             sel('flip(bytes32)'),
+  reveal:           sel('reveal(uint256,uint8,bytes32)'),
+  winnings:         sel('winnings(uint256)'),
+  maxAcceptableBet: sel('maxAcceptableBet()'),
+  minBet:           sel('minBet()'),
+  maxBet:           sel('maxBet()'),
+  revealWindow:     sel('REVEAL_WINDOW()'),
+  rounds:           sel('rounds(uint256)'),
+};
+const TOPIC = {
+  flipped:  topic('Flipped(uint256,address,uint256,uint256)'),
+  revealed: topic('Revealed(uint256,address,uint8,uint8,bool,uint256)'),
+};
+
+const TINES = 0, HANDLE = 1;
+const PENDING_KEY = 'forkflip.pending.v1';
+
+/* ------------------------------------------------------------------- dom --- */
+const $ = id => document.getElementById(id);
+const fork = $('fork'), result = $('result'), log = $('log');
+const btnT = $('btnTines'), btnH = $('btnHandle');
+
+/* ------------------------------------------------------- free-play stats --- */
+const KEY = 'forkflip.v1';
+const blank = { wins:0, flips:0, streak:0, best:0, recent:[] };
+let s = loadStats();
+
+function loadStats(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(KEY));
+    if(!raw || typeof raw !== 'object') return {...blank};
+    return {...blank, ...raw, recent: Array.isArray(raw.recent) ? raw.recent.slice(-20) : []};
+  }catch(e){ return {...blank}; }
+}
+function saveStats(){ try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
+function renderStats(){
+  $('sWins').textContent = s.wins;
+  $('sFlips').textContent = s.flips;
+  $('sStreak').textContent = s.streak;
+  $('sBest').textContent = s.best;
+  log.innerHTML = '';
+  s.recent.forEach(w => {
+    const d = document.createElement('div');
+    d.className = 'pip ' + (w ? 'w' : 'l');
+    d.textContent = w ? 'W' : 'L';
+    log.appendChild(d);
   });
-})();
+}
+function record(won){
+  s.flips++;
+  if(won){ s.wins++; s.streak++; if(s.streak > s.best) s.best = s.streak; }
+  else { s.streak = 0; }
+  s.recent.push(won);
+  if(s.recent.length > 20) s.recent.shift();
+  saveStats(); renderStats();
+}
+
+/* ------------------------------------------------------------- animation --- */
+let resting = 0;
+function spin(outcome){
+  const spins = 4 + Math.floor(Math.random()*3);
+  const end = (resting - (resting % 360)) + spins*360 + (outcome === HANDLE ? 180 : 0);
+  fork.classList.remove('idle');
+  fork.style.setProperty('--start', resting + 'deg');
+  fork.style.setProperty('--mid', (resting + spins*180) + 'deg');
+  fork.style.setProperty('--end', end + 'deg');
+  fork.classList.remove('flipping');
+  void fork.offsetWidth;
+  fork.classList.add('flipping');
+  resting = end;
+  return new Promise(r => setTimeout(r, 1950));
+}
+function say(html, cls){
+  result.className = 'result' + (cls ? ' ' + cls : '');
+  result.innerHTML = html;
+}
+
+/* ------------------------------------------------------------- free play --- */
+function coin(){
+  const a = new Uint8Array(1);
+  do { crypto.getRandomValues(a); } while(a[0] === 255); // reject the odd byte out
+  return a[0] % 2 === 0 ? TINES : HANDLE;
+}
+async function freeFlip(call){
+  lock(true);
+  say('<span class="quiet">In the air…</span>');
+  const outcome = coin();
+  await spin(outcome);
+  const won = outcome === call;
+  record(won);
+  const face = outcome === TINES ? 'Tines' : 'Handle';
+  say(won
+    ? face + '. You called it.' + (s.streak > 2 ? ' <span class="quiet">' + s.streak + ' in a row.</span>' : '')
+    : face + '. Not your flip.', won ? 'win' : 'lose');
+  lock(false);
+}
+
+/* ============================== chain plumbing ============================== */
+const eth = () => window.ethereum;
+let acct = null, chainHex = null;
+
+async function rpc(method, params = []){
+  const res = await fetch(CFG.rpc, {
+    method:'POST', headers:{'content-type':'application/json'},
+    body: JSON.stringify({jsonrpc:'2.0', id:1, method, params}),
+  });
+  const j = await res.json();
+  if (j.error) throw new Error(j.error.message || 'rpc error');
+  return j.result;
+}
+async function ethCall(data){
+  return rpc('eth_call', [{to: CFG.contract, data}, 'latest']);
+}
+const pad32   = h => h.replace(/^0x/,'').padStart(64,'0');
+const uintArg = v => pad32(BigInt(v).toString(16));
+const toBig   = h => BigInt(h === '0x' || !h ? '0x0' : h);
+
+/* 18-decimal formatting without a bignum library. */
+function fmt(wei, places = 4){
+  const neg = wei < 0n; if(neg) wei = -wei;
+  const whole = wei / 10n**18n;
+  let frac = (wei % 10n**18n).toString().padStart(18,'0').slice(0, places).replace(/0+$/,'');
+  return (neg?'-':'') + whole.toString() + (frac ? '.'+frac : '');
+}
+function parseAmount(str){
+  const t = String(str).trim();
+  if(!/^\d*\.?\d*$/.test(t) || t === '' || t === '.') throw new Error('Enter a number');
+  const [w, f = ''] = t.split('.');
+  if(f.length > 18) throw new Error('Too many decimals');
+  return BigInt(w || '0') * 10n**18n + BigInt((f + '0'.repeat(18)).slice(0,18));
+}
+
+async function ensureChain(){
+  chainHex = await eth().request({method:'eth_chainId'});
+  if (BigInt(chainHex) === BigInt(CFG.chainId)) return;
+  try{
+    await eth().request({method:'wallet_switchEthereumChain', params:[{chainId: CFG.hex}]});
+  }catch(e){
+    if (e && (e.code === 4902 || e.code === -32603)){
+      await eth().request({method:'wallet_addEthereumChain', params:[{
+        chainId: CFG.hex, chainName: CFG.name,
+        rpcUrls: [CFG.rpc], nativeCurrency: CFG.currency,
+        blockExplorerUrls: [CFG.explorer],
+      }]});
+    } else throw e;
+  }
+  chainHex = await eth().request({method:'eth_chainId'});
+  if (BigInt(chainHex) !== BigInt(CFG.chainId)) throw new Error('Wrong network');
+}
+
+async function connect(){
+  if (!eth()) throw new Error('No wallet found. Install a browser wallet, then reload.');
+  const a = await eth().request({method:'eth_requestAccounts'});
+  acct = a && a[0];
+  await ensureChain();
+  return acct;
+}
+
+async function waitForReceipt(hash){
+  for(let i=0;i<180;i++){
+    const r = await rpc('eth_getTransactionReceipt',[hash]);
+    if(r) return r;
+    await sleep(1000);
+  }
+  throw new Error('Transaction not mined in time');
+}
+async function waitForBlock(n){
+  for(let i=0;i<300;i++){
+    const cur = toBig(await rpc('eth_blockNumber',[]));
+    if(cur >= n) return cur;
+    await sleep(1000);
+  }
+  throw new Error('Chain did not advance');
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* --------------------------------------------------------- pending round --- */
+function savePending(p){ try{ localStorage.setItem(PENDING_KEY, JSON.stringify(p)); }catch(e){} }
+function loadPending(){
+  try{
+    const p = JSON.parse(localStorage.getItem(PENDING_KEY));
+    if(!p || p.contract !== CFG.contract) return null;
+    return p;
+  }catch(e){ return null; }
+}
+function clearPending(){ try{ localStorage.removeItem(PENDING_KEY); }catch(e){} }
+
+/* ------------------------------------------------------------ chain play --- */
+function step(html){ $('steps').innerHTML = html; }
+
+async function chainFlip(guess){
+  if(!KECCAK_OK) throw new Error('keccak self-test failed; refusing to build a commitment');
+  if(loadPending()) throw new Error('Reveal the flip you already have in the air first');
+
+  const stake = parseAmount($('amt').value);
+  const [minB, maxB] = await Promise.all([
+    ethCall(SEL.minBet).then(toBig),
+    ethCall(SEL.maxAcceptableBet).then(toBig),
+  ]);
+  if(stake < minB) throw new Error('Minimum stake is ' + fmt(minB) + ' FORKIN');
+  if(stake > maxB) throw new Error('The house can only cover ' + fmt(maxB) + ' FORKIN right now');
+
+  // The salt is the whole security story: it never leaves this machine before
+  // the reveal, which is what stops the sequencer from aiming the block hash.
+  const saltBytes = new Uint8Array(32);
+  crypto.getRandomValues(saltBytes);
+  const salt = '0x' + hex(saltBytes);
+
+  // keccak256(abi.encodePacked(uint8 guess, bytes32 salt, address player))
+  const packed = new Uint8Array(53);
+  packed[0] = guess;
+  packed.set(saltBytes, 1);
+  acct.replace(/^0x/,'').match(/.{2}/g).forEach((b,i) => packed[33+i] = parseInt(b,16));
+  const commitment = '0x' + hex(keccak256(packed));
+
+  step('<b>1/3</b> committing your call…');
+  const txh = await eth().request({method:'eth_sendTransaction', params:[{
+    from: acct, to: CFG.contract, value: '0x'+stake.toString(16),
+    data: SEL.flip + pad32(commitment),
+  }]});
+
+  const rcpt = await waitForReceipt(txh);
+  if(toBig(rcpt.status) !== 1n) throw new Error('The commit transaction reverted');
+
+  const evt = (rcpt.logs||[]).find(l =>
+    l.address.toLowerCase() === CFG.contract.toLowerCase() && l.topics[0] === TOPIC.flipped);
+  if(!evt) throw new Error('No Flipped event in the receipt');
+  const id = toBig(evt.topics[1]);
+  const commitBlock = toBig(rcpt.blockNumber);
+
+  const pending = { id:id.toString(), guess, salt, commitBlock:commitBlock.toString(),
+                    contract: CFG.contract, txh };
+  savePending(pending);
+
+  step('<b>2/3</b> waiting for the block that decides it…');
+  await waitForBlock(commitBlock + 2n);
+
+  return revealPending(pending);
+}
+
+async function revealPending(p){
+  const guess = p.guess;
+  step('<b>3/3</b> revealing…');
+  const data = SEL.reveal + uintArg(p.id) + uintArg(guess) + pad32(p.salt);
+
+  const txh = await eth().request({method:'eth_sendTransaction', params:[{
+    from: acct, to: CFG.contract, data,
+  }]});
+  const rcpt = await waitForReceipt(txh);
+  if(toBig(rcpt.status) !== 1n) throw new Error('The reveal transaction reverted');
+
+  const evt = (rcpt.logs||[]).find(l =>
+    l.address.toLowerCase() === CFG.contract.toLowerCase() && l.topics[0] === TOPIC.revealed);
+  if(!evt) throw new Error('No Revealed event in the receipt');
+
+  // data: guess(uint8), outcome(uint8), won(bool), paid(uint256), each 32 bytes
+  const words = evt.data.replace(/^0x/,'').match(/.{64}/g);
+  const outcome = Number(BigInt('0x'+words[1]));
+  const won     = BigInt('0x'+words[2]) === 1n;
+  const paid    = BigInt('0x'+words[3]);
+
+  clearPending();
+  step('');
+  await spin(outcome);
+  record(won);
+
+  const face = outcome === TINES ? 'Tines' : 'Handle';
+  say(won
+    ? face + '. Paid ' + fmt(paid) + ' FORKIN.'
+    : face + '. Not your flip.', won ? 'win' : 'lose');
+  await refreshChainUI();
+  return won;
+}
+
+/* ------------------------------------------------------------------- ui ---- */
+let mode = 'free';
+let busy = false;
+
+function lock(on){
+  busy = on;
+  btnT.disabled = btnH.disabled = on;
+  const r = $('btnResume'); if(r) r.disabled = on;
+}
+
+function setMode(m){
+  mode = m;
+  $('mFree').setAttribute('aria-selected', m === 'free');
+  $('mChain').setAttribute('aria-selected', m === 'chain');
+  $('chainPanel').classList.toggle('hide', m !== 'chain');
+  $('btnReset').classList.toggle('hide', m !== 'free');
+  $('foot').innerHTML = m === 'free'
+    ? '50/50, no wallet needed in free play. Just a fork.<br>' +
+      '<a href="https://github.com/The-Trenches-Team/fork-flip">source</a> · ' +
+      '<a href="https://forkinhood.com">fork in hood</a>'
+    : 'Two transactions: one to call it, one to open it. The house cannot see your ' +
+      'salt, and cannot withdraw money an open round is owed.<br>' +
+      '<a href="https://github.com/The-Trenches-Team/fork-flip">contract &amp; tests</a> · ' +
+      '<a href="https://forkinhood.com/explorer/">explorer</a>';
+  say('<span class="quiet">Make your call.</span>');
+  if(m === 'chain') initChainUI();
+  else btnT.disabled = btnH.disabled = false; // free play never needs a wallet
+}
+
+function initChainUI(){
+  const deployed = !!CFG.contract;
+  $('undeployed').classList.toggle('hide', deployed);
+  $('connectBox').classList.toggle('hide', !deployed || !!acct);
+  $('playBox').classList.toggle('hide', !deployed || !acct);
+  btnT.disabled = btnH.disabled = !deployed || !acct;
+  if(acct) refreshChainUI();
+}
+
+async function refreshChainUI(){
+  if(!CFG.contract || !acct) return;
+  $('uAddr').textContent = acct.slice(0,6) + '…' + acct.slice(-4);
+  try{
+    const [bal, maxB] = await Promise.all([
+      rpc('eth_getBalance',[acct,'latest']).then(toBig),
+      ethCall(SEL.maxAcceptableBet).then(toBig),
+    ]);
+    $('uBal').textContent = fmt(bal) + ' FORKIN';
+    $('uMax').textContent = fmt(maxB) + ' FORKIN';
+    await refreshPayout();
+  }catch(e){
+    $('uBal').textContent = 'unreachable';
+  }
+  const p = loadPending();
+  $('resumeBox').classList.toggle('hide', !p);
+  if(p){
+    $('resumeNote').textContent =
+      'Round #' + p.id + ', called ' + (p.guess === TINES ? 'tines' : 'handle') +
+      '. It must be revealed within 200 blocks of the commit or the stake is forfeit.';
+  }
+}
+
+async function refreshPayout(){
+  try{
+    const stake = parseAmount($('amt').value);
+    const pay = toBig(await ethCall(SEL.winnings + uintArg(stake)));
+    $('uPayout').textContent = fmt(pay) + ' FORKIN';
+  }catch(e){
+    $('uPayout').textContent = '—';
+  }
+}
+
+async function guarded(fn){
+  if(busy) return;
+  lock(true);
+  try{ await fn(); }
+  catch(e){
+    step('');
+    const msg = (e && (e.message || e.data && e.data.message)) || 'Something went wrong';
+    say('<span class="quiet">' + msg.replace(/</g,'&lt;').slice(0,180) + '</span>');
+  }
+  finally{
+    lock(false);
+    // initChainUI owns whether the call buttons are usable on chain, so re-run it
+    // rather than letting lock(false) hand back buttons a disconnected wallet
+    // cannot use.
+    if(mode === 'chain') initChainUI();
+  }
+}
+
+/* ----------------------------------------------------------------- wiring -- */
+$('mFree').addEventListener('click', () => setMode('free'));
+$('mChain').addEventListener('click', () => setMode('chain'));
+
+btnT.addEventListener('click', () => mode === 'free'
+  ? guarded(() => freeFlip(TINES))  : guarded(() => chainFlip(TINES)));
+btnH.addEventListener('click', () => mode === 'free'
+  ? guarded(() => freeFlip(HANDLE)) : guarded(() => chainFlip(HANDLE)));
+
+$('btnConnect').addEventListener('click', () => guarded(async () => {
+  await connect();
+  initChainUI();
+}));
+$('btnResume').addEventListener('click', () => guarded(async () => {
+  const p = loadPending();
+  if(!p) return;
+  await revealPending(p);
+}));
+
+$('btnReset').addEventListener('click', () => {
+  s = {...blank}; saveStats(); renderStats();
+  say('<span class="quiet">Make your call.</span>');
+});
+$('amt').addEventListener('input', () => { if(mode === 'chain') refreshPayout(); });
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+  $('amt').value = c.dataset.amt; refreshPayout();
+}));
+
+document.addEventListener('keydown', e => {
+  if(busy || /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if(e.key === 't' || e.key === 'T') btnT.click();
+  if(e.key === 'h' || e.key === 'H') btnH.click();
+});
+
+if(eth()){
+  eth().on && eth().on('accountsChanged', a => { acct = a && a[0] || null; initChainUI(); });
+  eth().on && eth().on('chainChanged', () => location.reload());
+}
+
+renderStats();
+if(!KECCAK_OK){
+  $('mChain').disabled = true;
+  $('mChain').title = 'keccak self-test failed';
+}
 </script>
 </body>
 </html>
