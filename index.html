@@ -501,13 +501,28 @@ async function waitForReceipt(hash){
   }
   throw new Error('Transaction not mined in time');
 }
-async function waitForBlock(n){
-  for(let i=0;i<300;i++){
-    const cur = toBig(await rpc('eth_blockNumber',[]));
-    if(cur >= n) return cur;
-    await sleep(1000);
+/// Get the chain to the block that decides a round.
+///
+/// Fork in Hood only produces blocks when there are transactions to put in them,
+/// so on a quiet chain waiting is not enough: the deciding block would never
+/// arrive and the round would sit until its window expired. Wait first in case
+/// the chain is busy, then make the blocks ourselves with zero-value self-sends.
+/// Each one costs gas and nothing else, and the loop terminates because every
+/// send adds exactly one block.
+async function reachBlock(target){
+  for(let i=0;i<20;i++){
+    if(toBig(await rpc('eth_blockNumber',[])) >= target) return;
+    await sleep(1500);
   }
-  throw new Error('Chain did not advance');
+  step('<b>2/3</b> chain is idle — nudging it to the deciding block…');
+  for(let i=0;i<6;i++){
+    if(toBig(await rpc('eth_blockNumber',[])) >= target) return;
+    const h = await eth().request({method:'eth_sendTransaction', params:[{
+      from: acct, to: acct, value: '0x0',
+    }]});
+    await waitForReceipt(h);
+  }
+  if(toBig(await rpc('eth_blockNumber',[])) < target) throw new Error('Chain did not advance');
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -570,13 +585,16 @@ async function chainFlip(guess){
   savePending(pending);
 
   step('<b>2/3</b> waiting for the block that decides it…');
-  await waitForBlock(commitBlock + 2n);
+  await reachBlock(commitBlock + 2n);
 
   return revealPending(pending);
 }
 
 async function revealPending(p){
   const guess = p.guess;
+  // A resumed round may never have reached its deciding block, so this is not
+  // redundant with the call in chainFlip.
+  await reachBlock(BigInt(p.commitBlock) + 2n);
   step('<b>3/3</b> revealing…');
   const data = SEL.reveal + uintArg(p.id) + uintArg(guess) + pad32(p.salt);
 

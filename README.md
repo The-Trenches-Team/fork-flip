@@ -39,6 +39,12 @@ at, whatever the owner changes afterwards.
 Not revealing is never profitable: an expired round forfeits the stake, which is
 exactly what losing costs.
 
+One wrinkle worth knowing about: Fork in Hood only produces blocks when there
+are transactions to put in them. On a quiet chain the block that decides your
+flip would never arrive on its own, so the page waits briefly and then makes the
+blocks itself with zero-value self-sends. That is why a flip can ask your wallet
+to sign more than twice. It costs gas and nothing else.
+
 The honest caveat, also in [DEPLOY.md](DEPLOY.md): Fork in Hood has one
 sequencer. It cannot aim your flip, but it can refuse to sequence your reveal
 until the 200-block window closes. That is inherent to a chain with one
