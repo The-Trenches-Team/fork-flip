@@ -53,7 +53,8 @@ sequencer, not something this contract can fix.
 ## Contracts
 
 ```bash
-cd contracts && forge install foundry-rs/forge-std && forge test
+git clone https://github.com/The-Trenches-Team/fork-flip.git
+cd fork-flip && forge install foundry-rs/forge-std && forge test
 ```
 
 36 tests, including a solvency invariant (`balance == bankroll + lockedFunds`

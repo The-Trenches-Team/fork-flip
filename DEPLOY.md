@@ -6,11 +6,24 @@ Everything below runs against Fork in Hood, chain `36754663`, RPC
 You need a key with enough FORKIN to cover the bankroll plus gas. Nothing here
 asks for that key except `forge script`, and it is never written to the repo.
 
+## 0. Get the repo
+
+`fork-flip` is its own repository. Every command below runs from its root, not
+from `fork-in-hood`.
+
+```bash
+git clone https://github.com/The-Trenches-Team/fork-flip.git
+```
+
 ## 1. Tests first
 
 ```bash
-cd contracts && forge install foundry-rs/forge-std && forge test
+cd fork-flip && forge install foundry-rs/forge-std && forge test
 ```
+
+`foundry.toml` is at the repo root rather than under `contracts/`, because
+`forge install` resolves paths from the git root: a nested config would quietly
+drop `forge-std` one directory above the config that references it.
 
 36 tests. The one to look at is `test_commitmentMatchesTheFrontendVector`, which
 pins the commitment encoding that `index.html` builds in the browser. If that
@@ -19,8 +32,11 @@ ever fails, the site would be placing stakes nobody can reveal.
 ## 2. Deploy
 
 ```bash
-cd contracts && PRIVATE_KEY=0x… BANKROLL=100000000000000000000 forge script script/Deploy.s.sol:Deploy --rpc-url https://rpc.forkinhood.com --broadcast
+PRIVATE_KEY=0xYOUR_REAL_KEY BANKROLL=100000000000000000000 forge script contracts/script/Deploy.s.sol:Deploy --rpc-url https://rpc.forkinhood.com --broadcast
 ```
+
+`PRIVATE_KEY` has to be an actual 64-hex-character key. A literal `0x…` fails
+before anything is broadcast.
 
 Environment it reads:
 

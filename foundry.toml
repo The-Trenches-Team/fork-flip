@@ -1,0 +1,13 @@
+# At the repo root on purpose. `forge install` resolves paths from the git root,
+# so a foundry.toml nested in contracts/ sends dependencies to ../lib and every
+# forge command has to be run from a different directory than the one the config
+# lives in. One root, one lib/, no surprises.
+[profile.default]
+src = "contracts/src"
+test = "contracts/test"
+script = "contracts/script"
+out = "out"
+libs = ["lib"]
+solc = "0.8.20"
+optimizer = true
+optimizer_runs = 200

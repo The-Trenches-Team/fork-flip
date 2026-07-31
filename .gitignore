@@ -1,5 +1,10 @@
-contracts/lib/
-contracts/out/
-contracts/cache/
-contracts/broadcast/
+# forge-std is fetched with `forge install`, not vendored — same as the
+# fork-in-hood repo. That also creates .gitmodules, which is why it is ignored
+# here rather than committed: the checkout is a build input, not source.
+lib/
+.gitmodules
+out/
+cache/
+broadcast/
+foundry.lock
 .DS_Store
