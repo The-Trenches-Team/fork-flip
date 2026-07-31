@@ -34,12 +34,34 @@ ever fails, the site would be placing stakes nobody can reveal.
 
 ## 2. Deploy
 
+Sign from an encrypted keystore rather than an environment variable, so the key
+never enters your shell history. Once, to import an existing key or create one:
+
 ```bash
-PRIVATE_KEY=0xYOUR_REAL_KEY BANKROLL=100000000000000000000 forge script contracts/script/Deploy.s.sol:Deploy --rpc-url https://rpc.forkinhood.com --broadcast
+cast wallet import forkflip-deployer --interactive
 ```
 
-`PRIVATE_KEY` has to be an actual 64-hex-character key. A literal `0x…` fails
-before anything is broadcast.
+It prompts for the key and a password, and prints the address. Fund that address
+with FORKIN, then check it arrived:
+
+```bash
+cast balance <THAT_ADDRESS> --rpc-url https://rpc.forkinhood.com
+```
+
+Then deploy. `BANKROLL` is in wei; 10000000000000000000 is 10 FORKIN.
+
+```bash
+BANKROLL=10000000000000000000 forge script contracts/script/Deploy.s.sol:Deploy --rpc-url https://rpc.forkinhood.com --account forkflip-deployer --sender <THAT_ADDRESS> --broadcast
+```
+
+Drop `--broadcast` to simulate first; it costs nothing and prints the same
+summary. The whole deployment is about 1.67M gas, roughly 0.00034 FORKIN.
+
+`PRIVATE_KEY=0x…` as an environment variable still works instead of
+`--account`/`--sender`, but it leaves the key in your shell history.
+
+Do not use the batch-poster, validator, or any other chain-operator key here.
+Those run the sequencer, and this contract does not need them.
 
 Environment it reads:
 

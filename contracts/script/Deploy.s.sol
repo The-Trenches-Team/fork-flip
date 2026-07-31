@@ -24,8 +24,13 @@ contract Deploy is Script {
     }
 
     function run() external returns (ForkFlip flip) {
-        uint256 pk = vm.envUint("PRIVATE_KEY");
-        address deployer = vm.addr(pk);
+        // Prefer forge's own wallet handling (`--account`, `--ledger`,
+        // `--interactive`), which signs from an encrypted keystore and never puts
+        // the key in an environment variable or your shell history. PRIVATE_KEY
+        // still works if you want it, but it is the worse of the two.
+        uint256 pk = vm.envOr("PRIVATE_KEY", uint256(0));
+        address deployer = pk != 0 ? vm.addr(pk) : msg.sender;
+
         address owner = vm.envOr("OWNER", deployer);
         uint256 bankroll = vm.envOr("BANKROLL", uint256(100 ether));
         uint256 edge = vm.envOr("EDGE_BPS", uint256(200));
@@ -37,9 +42,12 @@ contract Deploy is Script {
         // deploy at an edge nobody asked for instead of reverting.
         require(edge <= flipMaxEdge(), "EDGE_BPS above the contract's cap");
 
-        vm.startBroadcast(pk);
+        if (pk != 0) vm.startBroadcast(pk);
+        else vm.startBroadcast();
         flip = new ForkFlip{value: bankroll}(owner, uint16(edge), minBet, maxBet);
         vm.stopBroadcast();
+
+        console2.log("deployer     ", deployer);
 
         console2.log("ForkFlip     ", address(flip));
         console2.log("owner        ", owner);
