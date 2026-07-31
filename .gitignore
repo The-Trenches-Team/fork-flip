@@ -1,6 +1,6 @@
-# forge-std is fetched with `forge install`, not vendored — same as the
-# fork-in-hood repo. That also creates .gitmodules, which is why it is ignored
-# here rather than committed: the checkout is a build input, not source.
+# forge-std is fetched with `forge install --no-git`, not vendored — same as the
+# fork-in-hood repo. .gitmodules is listed too, so that an install without
+# --no-git still leaves the tree tidy: the checkout is a build input, not source.
 lib/
 .gitmodules
 out/

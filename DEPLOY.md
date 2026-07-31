@@ -18,12 +18,15 @@ git clone https://github.com/The-Trenches-Team/fork-flip.git
 ## 1. Tests first
 
 ```bash
-cd fork-flip && forge install foundry-rs/forge-std && forge test
+cd fork-flip && forge install --no-git foundry-rs/forge-std && forge test
 ```
 
-`foundry.toml` is at the repo root rather than under `contracts/`, because
-`forge install` resolves paths from the git root: a nested config would quietly
-drop `forge-std` one directory above the config that references it.
+Two details that are deliberate, not cosmetic. `foundry.toml` sits at the repo
+root rather than under `contracts/`, because `forge install` resolves paths from
+the git root: a nested config drops `forge-std` one directory above the config
+that references it. And `--no-git` fetches it as a plain directory instead of a
+submodule, which keeps `git status` clean — without it, `forge install` stages a
+`.gitmodules` and a gitlink whether or not you wanted them.
 
 36 tests. The one to look at is `test_commitmentMatchesTheFrontendVector`, which
 pins the commitment encoding that `index.html` builds in the browser. If that
